@@ -1,6 +1,6 @@
-import telebot, subprocess, time, pyautogui
+import telebot
 from telebot import types
-from remote import *
+
 
 TOKEN = "6617458988:AAE2hZ3cbwAQqMNpkB796_cfJmBN0PuaIWU"
 bot = telebot.TeleBot(TOKEN)
@@ -8,67 +8,53 @@ bot = telebot.TeleBot(TOKEN)
 # Funcion para enviar mensajes
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
-    texto = "holamundo"
-    bot.reply_to(message, f'testing {texto}')
+    texto = "Bienvenido al proyecto Smart-living!!\n\nEscribe  '/menu'  para ver las opciones disponibles."
+    bot.reply_to(message, texto)
 
+@bot.message_handler(commands=['menu'])
+def send_menu(message):
+    menu = "Bienvenido al menu de Smart-living.\n\nFunciones disponibles:\n\n/TV\n/Projector\n/AC\n/Share"
+    bot.reply_to(message, menu)
 
-# Se establece que el mensaje enviado es de tipo str
-#@bot.message_handler(func=lambda message: True)
-#def echo_message(message):
-#    bot.reply_to(message, message.text)
+# Funcion para limpiar la conversacion
+@bot.message_handler(commands=['clear'])
+def clear_conversation(message):
+    chat_id = message.chat.id
+    message_id = message.message_id
 
+    # Definir cuántos mensajes recientes quieres intentar eliminar
+    num_messages_to_delete = 100
 
-# Funcion para agregar un menu con botones
-@bot.message_handler(commands=['Aire'])
-def control_aire(message):
-   
-    # Crea el menu
+    # Intentar eliminar los mensajes recientes
+    for i in range(num_messages_to_delete):
+        try:
+            bot.delete_message(chat_id, message_id - i)
+        except telebot.apihelper.ApiException as e:
+            print(f"Error al eliminar el mensaje {message_id - i}: {e}")
+    
+    bot.reply_to(message, "La conversación ha sido limpiada.")
+
+@bot.message_handler(commands=['TV'])
+def tv_controller(message):
     menu = types.InlineKeyboardMarkup(row_width=2)
-
-    # Agregar los botones del menu
-    btn_on = types.InlineKeyboardButton('On', callback_data='Encender')
-    btn_off = types.InlineKeyboardButton('off', callback_data='off')
-
-    # Agrega ambos botones al menu
-    menu.add(btn_on, btn_off)
-
-    # Envia el menu
-    bot.send_message(message.chat.id, "Control remoto del aire acondicionado", reply_markup=menu)
-
-
-@bot.callback_query_handler(func=lambda call:True)
-def callback_query(call):
-    if call.data == "Encender":
-        air.on()
-        bot.answer_callback_query(call.id, "Aire encendido!")
-    if call.data == "off": 
-        air.off()
-        bot.answer_callback_query(call.id, "Aire apagado!")
-        
-
-@bot.message_handler(commands=['Tv'])
-def control_tv(message):
-
-    # crear menu
-    menu = types.InlineKeyboardMarkup(row_width=1)
 
     # Agregar botones
     btn_power = types.InlineKeyboardButton('Power', callback_data='Power')
     btn_mute = types.InlineKeyboardButton('Mute', callback_data='Mute')
+    btn_chan_up = types.InlineKeyboardButton('▲', callback_data='Chan_up')
+    btn_chan_down = types.InlineKeyboardButton('▼', callback_data='Chan_down')
+    btn_vol_up = types.InlineKeyboardButton('+', callback_data='Vol_up')
+    btn_vol_down = types.InlineKeyboardButton('-', callback_data='Vol_down')
 
     # Agrega los botones al menu
-    menu.add(btn_power, btn_mute)
-
-    # Envia el menu
+    menu.add(btn_power, btn_mute, btn_chan_up, btn_vol_up, btn_chan_down, btn_vol_down)
     bot.send_message(message.chat.id, "Control remoto del Televisor", reply_markup=menu)
 
 @bot.callback_query_handler(func=lambda call:True)
 def callback_query(call):
     if call.data == "Power":
-        Tv.power()
-        bot.answer_callback_query(call.id, "Senal enviada!!")
+        bot.send_message(call.message.chat.id, "Ha sido presionado el boton power!!")
     if call.data == "Mute":
-        Tv.mute()
         bot.answer_callback_query(call.id, "Senal enviada!!")
 
 
