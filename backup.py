@@ -1,6 +1,6 @@
 import telebot, subprocess, time, os, pyautogui
 from telebot import types
-from remote import *
+
 
 TOKEN = "6617458988:AAE2hZ3cbwAQqMNpkB796_cfJmBN0PuaIWU"
 bot = telebot.TeleBot(TOKEN)
@@ -58,10 +58,10 @@ def control_aire(message):
 @bot.callback_query_handler(func=lambda call:True)
 def callback_query(call):
     if call.data == "Encender":
-        air.on()
+        
         bot.answer_callback_query(call.id, "Aire encendido!")
     if call.data == "off": 
-        air.off()
+        
         bot.answer_callback_query(call.id, "Aire apagado!")
         
 
@@ -84,11 +84,10 @@ def control_tv(message):
 @bot.callback_query_handler(func=lambda call:True)
 def callback_query(call):
     if call.data == "Power":
-        os.system("type nul > Test.txt")
+        pyautogui.write("ir universal tv Power")
+        pyautogui.press('ENTER')
         bot.answer_callback_query(call.id, "Senal enviada!!")
-    if call.data == "Mute":
-        Tv.mute()
-        bot.answer_callback_query(call.id, "Senal enviada!!")
+
 
 
 if __name__ == "__main__":
