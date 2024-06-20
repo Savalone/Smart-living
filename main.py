@@ -65,24 +65,53 @@ def tv_controller(message):
     menu = types.InlineKeyboardMarkup(row_width=2)
 
     # Agregar botones
-    btn_power = types.InlineKeyboardButton('Power', callback_data='Power')
-    btn_mute = types.InlineKeyboardButton('Mute', callback_data='Mute')
+    btn_power = types.InlineKeyboardButton('Power', callback_data='TV_Power')
+    btn_mute = types.InlineKeyboardButton('Mute', callback_data='TV_Mute')
     btn_chan_up = types.InlineKeyboardButton('▲', callback_data='Chan_up')
     btn_chan_down = types.InlineKeyboardButton('▼', callback_data='Chan_down')
-    btn_vol_up = types.InlineKeyboardButton('+', callback_data='Vol_up')
-    btn_vol_down = types.InlineKeyboardButton('-', callback_data='Vol_down')
+    btn_vol_up = types.InlineKeyboardButton('+', callback_data='TV_Vol_up')
+    btn_vol_down = types.InlineKeyboardButton('-', callback_data='TV_Vol_down')
 
     # Agrega los botones al menu
     menu.add(btn_power, btn_mute, btn_chan_up, btn_vol_up, btn_chan_down, btn_vol_down)
     bot.send_message(message.chat.id, "Control remoto del Televisor", reply_markup=menu)
 
+@bot.message_handler(commands=['AC'])
+def tv_controller(message):
+    menu = types.InlineKeyboardMarkup(row_width=2)
+
+    # Agregar botones
+    btn_power = types.InlineKeyboardButton('Power', callback_data='AC_Power')
+    btn_max = types.InlineKeyboardButton('Max', callback_data='Max')
+    btn_min = types.InlineKeyboardButton('Min', callback_data='Min')
+
+    # Agrega los botones al menu
+    menu.add(btn_max, btn_min, btn_power)
+    bot.send_message(message.chat.id, "Control remoto del Aire acondicionado", reply_markup=menu)
+
+@bot.message_handler(commands=['Projector'])
+def tv_controller(message):
+    menu = types.InlineKeyboardMarkup(row_width=2)
+
+    # Agregar botones
+    btn_power = types.InlineKeyboardButton('Power', callback_data='PR_Power')
+    btn_Mute = types.InlineKeyboardButton('Mute', callback_data='PR_Mute')
+    btn_Vol_down = types.InlineKeyboardButton('-', callback_data='PR_Vol_down')
+    btn_Vol_up = types.InlineKeyboardButton('+', callback_data='PR_Vol_up')
+    
+    # Agrega los botones al menu
+    menu.add(btn_power, btn_Mute, btn_Vol_down, btn_Vol_up)
+    bot.send_message(message.chat.id, "Control remoto del Proyector", reply_markup=menu)
+
+#---- Callback management ------------------------------------------------------------------------------------------------
+
 @bot.callback_query_handler(func=lambda call: True)
 def callback_query(call):
-    if call.data == 'Power':
+    if call.data == 'TV_Power':
         tv_signal = "ir universal tv Power\r"
         send_ir_signal(tv_signal)
     
-    elif call.data == 'Mute':
+    elif call.data == 'TV_Mute':
         tv_signal = "ir universal tv Mute\r"
         send_ir_signal(tv_signal)
     
@@ -94,36 +123,18 @@ def callback_query(call):
         tv_signal = "ir universal tv Ch_prev\r"
         send_ir_signal(tv_signal)
        
-    elif call.data == 'Vol_up':
+    elif call.data == 'TV_Vol_up':
         tv_signal = "ir universal tv Vol_up\r"
         send_ir_signal(tv_signal)
         
-    elif call.data == 'Vol_down':
+    elif call.data == 'TV_Vol_down':
         tv_signal = "ir universal tv Vol_dn\r"
         send_ir_signal(tv_signal)
-        
-
-#----  Air Conditioner   --------------------------------------------------------------------------------------------------------------------
-
-@bot.message_handler(commands=['AC'])
-def tv_controller(message):
-    menu = types.InlineKeyboardMarkup(row_width=2)
-
-    # Agregar botones
-    btn_power = types.InlineKeyboardButton('Power', callback_data='Power')
-    btn_max = types.InlineKeyboardButton('Max', callback_data='Max')
-    btn_min = types.InlineKeyboardButton('Min', callback_data='Min')
-
-    # Agrega los botones al menu
-    menu.add(btn_max, btn_min, btn_power)
-    bot.send_message(message.chat.id, "Control remoto del Aire acondicionado", reply_markup=menu)
-
-@bot.callback_query_handler(func=lambda call: True)
-def callback_query(call):
-    if call.data == 'Power':
+# --- AC ------------------------------------------
+    elif call.data == 'AC_Power':
         ac_signal = "ir universal ac Off\r"
         send_ir_signal(ac_signal)
-    
+
     elif call.data == 'Max':
         ac_signal = "ir universal ac Cool_hi\r"
         send_ir_signal(ac_signal)
@@ -131,39 +142,21 @@ def callback_query(call):
     elif call.data == 'Min':
         ac_signal = "ir universal ac Cool_lo\r"
         send_ir_signal(ac_signal)
-    
 
-#---  Projectors  -----------------------------------------------------------------------------------------------------------------------------
-
-@bot.message_handler(commands=['Projector'])
-def tv_controller(message):
-    menu = types.InlineKeyboardMarkup(row_width=2)
-
-    # Agregar botones
-    btn_power = types.InlineKeyboardButton('Power', callback_data='Power')
-    btn_Mute = types.InlineKeyboardButton('Mute', callback_data='Mute')
-    btn_Vol_down = types.InlineKeyboardButton('-', callback_data='Vol_down')
-    btn_Vol_up = types.InlineKeyboardButton('+', callback_data='Vol_up')
-    
-    # Agrega los botones al menu
-    menu.add(btn_power, btn_Mute, btn_Vol_down, btn_Vol_up)
-    bot.send_message(message.chat.id, "Control remoto del Proyector", reply_markup=menu)
-
-@bot.callback_query_handler(func=lambda call: True)
-def callback_query(call):
-    if call.data == 'Power':
+# ---- Projector --------------------------------
+    if call.data == 'PR_Power':
         pr_signal = "ir universal projector Power\r"
         send_ir_signal(pr_signal)
     
-    elif call.data == 'Mute':
+    elif call.data == 'PR_Mute':
         pr_signal = "ir universal projector Mute\r"
         send_ir_signal(pr_signal)
     
-    elif call.data == 'Vol_down':
+    elif call.data == 'PR_Vol_down':
         pr_signal = "ir universal projector Vol_down\r"
         send_ir_signal(pr_signal)
 
-    elif call.data == 'Vol_up':
+    elif call.data == 'PR_Vol_up':
         pr_signal = "ir universal projector Vol_up\r"
         send_ir_signal(pr_signal)
 
